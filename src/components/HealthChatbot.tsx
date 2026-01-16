@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Send, Heart } from "lucide-react";
+import { Send, Heart, Apple, Moon, Dumbbell, Brain, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
@@ -12,6 +12,14 @@ type Message = {
 };
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/health-chat`;
+
+const quickTopics = [
+  { icon: Apple, label: "Nutrition", prompt: "What are some tips for eating a healthier diet?" },
+  { icon: Moon, label: "Sleep", prompt: "How can I improve my sleep quality?" },
+  { icon: Dumbbell, label: "Exercise", prompt: "What's a good exercise routine for beginners?" },
+  { icon: Brain, label: "Stress", prompt: "What are some effective ways to manage stress?" },
+  { icon: Sparkles, label: "Wellness", prompt: "What daily habits can improve my overall wellness?" },
+];
 
 const HealthChatbot = () => {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -94,12 +102,10 @@ const HealthChatbot = () => {
     }
   };
 
-  const handleSubmit = async (e?: React.FormEvent) => {
-    e?.preventDefault();
-    const trimmedInput = input.trim();
-    if (!trimmedInput || isLoading) return;
+  const handleSubmitWithMessage = async (messageText: string) => {
+    if (!messageText.trim() || isLoading) return;
 
-    const userMessage: Message = { role: "user", content: trimmedInput };
+    const userMessage: Message = { role: "user", content: messageText.trim() };
     const newMessages = [...messages, userMessage];
     setMessages(newMessages);
     setInput("");
@@ -117,6 +123,11 @@ const HealthChatbot = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleSubmit = async (e?: React.FormEvent) => {
+    e?.preventDefault();
+    await handleSubmitWithMessage(input);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -149,10 +160,22 @@ const HealthChatbot = () => {
             <h3 className="font-display font-semibold text-lg text-foreground mb-2">
               Welcome to Your Health Assistant
             </h3>
-            <p className="text-sm text-muted-foreground max-w-md">
-              I'm here to help with general health questions, wellness tips, and lifestyle guidance. 
-              Ask me anything about nutrition, exercise, sleep, or stress management!
+            <p className="text-sm text-muted-foreground max-w-md mb-6">
+              I'm here to help with general health questions, wellness tips, and lifestyle guidance.
             </p>
+            <div className="flex flex-wrap justify-center gap-2">
+              {quickTopics.map((topic) => (
+                <button
+                  key={topic.label}
+                  onClick={() => handleSubmitWithMessage(topic.prompt)}
+                  disabled={isLoading}
+                  className="flex items-center gap-2 px-4 py-2 bg-secondary hover:bg-accent text-secondary-foreground rounded-full text-sm font-medium transition-colors disabled:opacity-50"
+                >
+                  <topic.icon className="w-4 h-4" />
+                  {topic.label}
+                </button>
+              ))}
+            </div>
           </div>
         ) : (
           messages.map((message, index) => (
