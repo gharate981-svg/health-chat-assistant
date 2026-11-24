@@ -1,5 +1,6 @@
 import { Heart, Shield, Clock } from "lucide-react";
 import HealthChatbot from "@/components/HealthChatbot";
+import LstmPresentationDemo from "@/components/LstmPresentationDemo";
 
 const Index = () => {
   return (
@@ -59,6 +60,7 @@ const Index = () => {
       {/* Chat Section */}
       <main className="container mx-auto px-4 pb-16">
         <HealthChatbot />
+        <LstmPresentationDemo />
       </main>
 
       {/* Footer */}
