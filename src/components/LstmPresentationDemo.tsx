@@ -2,7 +2,15 @@ import { useState } from "react";
 import { ArrowLeft, ArrowRight, Brain, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-const examples = [
+type TopicExample = {
+  id: string;
+  label: string;
+  sentence: string;
+  signals: string[];
+  memory: string;
+};
+
+const examples: TopicExample[] = [
   {
     id: "nutrition",
     label: "Nutrition",
@@ -31,7 +39,7 @@ const examples = [
     signals: ["stressed", "exams"],
     memory: "stress before exams",
   },
-] as const;
+];
 
 const stages = [
   {
@@ -62,7 +70,7 @@ const stages = [
 ] as const;
 
 const LstmPresentationDemo = () => {
-  const [selectedId, setSelectedId] = useState<(typeof examples)[number]["id"]>("sleep");
+  const [selectedId, setSelectedId] = useState("sleep");
   const [activeStage, setActiveStage] = useState(0);
   const example = examples.find((item) => item.id === selectedId);
 
@@ -70,9 +78,9 @@ const LstmPresentationDemo = () => {
 
   const tokens = example.sentence.match(/\S+/g) ?? [];
   const isSignal = (token: string) =>
-    example.signals.includes(token.toLowerCase().replace(/[.,!?]/g, "") as (typeof example.signals)[number]);
+    example.signals.includes(token.toLowerCase().replace(/[.,!?]/g, ""));
 
-  const goToExample = (id: (typeof examples)[number]["id"]) => {
+  const goToExample = (id: TopicExample["id"]) => {
     setSelectedId(id);
     setActiveStage(0);
   };
